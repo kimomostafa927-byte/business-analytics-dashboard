@@ -239,6 +239,30 @@ footer {
         flex-direction: column;
     }
 }
+.filters {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 20px 0;
+}
+
+.filters input,
+.filters select {
+    padding: 11px 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    font-size: 14px;
+}
+
+.filters input {
+    flex: 1;
+    min-width: 180px;
+}
+
+.filters select {
+    min-width: 150px;
+}
 
 @media (max-width: 450px) {
     .stats {
