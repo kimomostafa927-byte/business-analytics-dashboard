@@ -73,18 +73,7 @@ categoryFilter.addEventListener("change", filterSales);
 
 displaySales(sales);
 
-// Search transactions
-document.getElementById("search").addEventListener("input", function() {
-    const query = this.value.toLowerCase();
 
-    const filtered = sales.filter(item =>
-        Object.values(item).some(value =>
-            String(value).toLowerCase().includes(query)
-        )
-    );
-
-    displaySales(filtered);
-});
 
 // Revenue chart
 new Chart(document.getElementById("revenueChart"), {
