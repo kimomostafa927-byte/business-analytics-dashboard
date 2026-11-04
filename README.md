@@ -4,14 +4,15 @@
 INSIGHT is a business analytics dashboard designed to visualize sales performance and help users understand key business metrics through interactive charts and tables.
 
 ## Features
-- Revenue, profit, orders, and customer KPIs.
-- Monthly revenue visualization.
-- Sales breakdown by product category.
-- Recent transactions table.
-- Search and filter transactions.
-- Products and customers overview.
-- Responsive dashboard layout.
 
+- Business performance overview
+- Revenue and profit analysis
+- Sales visualization using interactive charts
+- Monthly revenue filtering
+- Product category filtering
+- Recent transactions table
+- Products and customers overview
+- 
 ## Technologies Used
 - HTML5
 - CSS3
