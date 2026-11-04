@@ -85,6 +85,58 @@ const categoryTotals = categories.map(category =>
         .reduce((sum, item) => sum + item.revenue, 0)
 );
 
+// Product performance
+const productData = {};
+
+sales.forEach(item => {
+    if (!productData[item.product]) {
+        productData[item.product] = {
+            category: item.category,
+            orders: 0,
+            revenue: 0
+        };
+    }
+
+    productData[item.product].orders++;
+    productData[item.product].revenue += item.revenue;
+});
+
+document.getElementById("productsTable").innerHTML =
+    Object.entries(productData).map(([name, data]) => `
+        <tr>
+            <td>${name}</td>
+            <td>${data.category}</td>
+            <td>${data.orders}</td>
+            <td>$${data.revenue.toLocaleString()}</td>
+        </tr>
+    `).join("");
+
+// Customer overview
+const customerData = {};
+
+sales.forEach(item => {
+    if (!customerData[item.customer]) {
+        customerData[item.customer] = {
+            orders: 0,
+            spent: 0
+        };
+    }
+
+    customerData[item.customer].orders++;
+    customerData[item.customer].spent += item.revenue;
+});
+
+document.getElementById("customersTable").innerHTML =
+    Object.entries(customerData).map(([name, data]) => `
+        <tr>
+            <td>${name}</td>
+            <td>${data.orders}</td>
+            <td>$${data.spent.toLocaleString()}</td>
+        </tr>
+    `).join("");
+
+
+
 new Chart(document.getElementById("categoryChart"), {
     type: "doughnut",
     data: {
