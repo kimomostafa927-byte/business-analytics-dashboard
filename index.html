@@ -1,0 +1,96 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Insight | Business Analytics</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="sidebar">
+    <h2>INSIGHT<span>.</span></h2>
+    <p class="menu-label">MENU</p>
+    <a class="active" href="#">Dashboard</a>
+    <a href="#sales">Sales</a>
+    <a href="#products">Products</a>
+    <a href="#customers">Customers</a>
+</div>
+
+<main>
+    <header>
+        <div>
+            <h1>Business Overview</h1>
+            <p>Welcome back. Here's your business performance.</p>
+        </div>
+        <span class="date">2026 Analytics</span>
+    </header>
+
+    <section class="stats">
+        <div class="stat-card">
+            <p>Total Revenue</p>
+            <h2 id="revenue">$0</h2>
+            <span>Overall sales revenue</span>
+        </div>
+        <div class="stat-card">
+            <p>Total Profit</p>
+            <h2 id="profit">$0</h2>
+            <span>Net business profit</span>
+        </div>
+        <div class="stat-card">
+            <p>Total Orders</p>
+            <h2 id="orders">0</h2>
+            <span>Orders processed</span>
+        </div>
+        <div class="stat-card">
+            <p>Customers</p>
+            <h2 id="customers-count">0</h2>
+            <span>Unique customers</span>
+        </div>
+    </section>
+
+    <section class="charts">
+        <div class="panel">
+            <h3>Revenue Overview</h3>
+            <canvas id="revenueChart"></canvas>
+        </div>
+        <div class="panel">
+            <h3>Sales by Category</h3>
+            <canvas id="categoryChart"></canvas>
+        </div>
+    </section>
+
+    <section class="panel" id="sales">
+        <div class="table-heading">
+            <div>
+                <h3>Recent Transactions</h3>
+                <p>Review your latest sales activity.</p>
+            </div>
+            <input id="search" placeholder="Search transactions...">
+        </div>
+
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Product</th>
+                        <th>Category</th>
+                        <th>Revenue</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="salesTable"></tbody>
+            </table>
+        </div>
+    </section>
+
+    <footer>INSIGHT Analytics Dashboard · Demo Project</footer>
+</main>
+
+<script src="script.js"></script>
+</body>
+</html>
