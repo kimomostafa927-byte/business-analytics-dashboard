@@ -9,166 +9,218 @@ const sales = [
     {id:"ORD-1007", customer:"Ali Mostafa", product:"Printer", category:"Electronics", revenue:700, cost:500, date:"2026-04-02"},
     {id:"ORD-1008", customer:"Laila Karim", product:"Bookshelf", category:"Furniture", revenue:350, cost:220, date:"2026-04-15"}
 ];
-const totalRevenue = sales.reduce((sum, item) => sum + item.revenue, 0);
-const totalProfit = sales.reduce((sum, item) => sum + item.revenue - item.cost, 0);
-const customers = new Set(sales.map(item => item.customer)).size;
 
-document.getElementById("revenue").textContent =
-    "$" + totalRevenue.toLocaleString();
-
-document.getElementById("profit").textContent =
-    "$" + totalProfit.toLocaleString();
-
-document.getElementById("orders").textContent = sales.length;
-
-document.getElementById("customers-count").textContent = customers;
-
-// Transactions table
 const table = document.getElementById("salesTable");
-
-function displaySales(data) {
-    table.innerHTML = data.map(item => `
-        <tr>
-            <td>${item.id}</td>
-            <td>${item.customer}</td>
-            <td>${item.product}</td>
-            <td>${item.category}</td>
-            <td>$${item.revenue.toLocaleString()}</td>
-            <td><span class="status">Completed</span></td>
-        </tr>
-    `).join("");
-}
-
 const searchInput = document.getElementById("search");
 const monthFilter = document.getElementById("monthFilter");
 const categoryFilter = document.getElementById("categoryFilter");
 
+const formatMoney = value => "$" + value.toLocaleString();
+
+function displaySales(data) {
+    table.innerHTML = data.length
+        ? data.map(item => `
+            <tr>
+                <td>${item.id}</td>
+                <td>${item.customer}</td>
+                <td>${item.product}</td>
+                <td>${item.category}</td>
+                <td>${formatMoney(item.revenue)}</td>
+                <td><span class="status">Completed</span></td>
+            </tr>
+        `).join("")
+        : `<tr><td colspan="6">No transactions found</td></tr>`;
+}
+
+// Create charts
+const revenueChart = new Chart(
+    document.getElementById("revenueChart"),
+    {
+        type: "bar",
+        data: {
+            labels: [],
+            datasets: [{
+                label: "Revenue",
+                data: [],
+                backgroundColor: "#426b9a",
+                borderRadius: 5
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false }
+            }
+        }
+    }
+);
+
+const categoryChart = new Chart(
+    document.getElementById("categoryChart"),
+    {
+        type: "doughnut",
+        data: {
+            labels: [],
+            datasets: [{
+                data: [],
+                backgroundColor: ["#426b9a", "#70b7b0", "#e6b66a"],
+                borderWidth: 0
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    }
+);
+
+function updateDashboard(data) {
+    // KPI calculations
+    const totalRevenue = data.reduce(
+        (sum, item) => sum + item.revenue, 0
+    );
+
+    const totalProfit = data.reduce(
+        (sum, item) => sum + item.revenue - item.cost, 0
+    );
+
+    const totalCustomers = new Set(
+        data.map(item => item.customer)
+    ).size;
+
+    document.getElementById("revenue").textContent =
+        formatMoney(totalRevenue);
+
+    document.getElementById("profit").textContent =
+        formatMoney(totalProfit);
+
+    document.getElementById("orders").textContent = data.length;
+
+    document.getElementById("customers-count").textContent =
+        totalCustomers;
+
+    // Transactions table
+    displaySales(data);
+
+    // Monthly revenue
+    const monthlyTotals = {};
+
+    data.forEach(item => {
+        const month = item.date.substring(0, 7);
+
+        monthlyTotals[month] =
+            (monthlyTotals[month] || 0) + item.revenue;
+    });
+
+    const months = Object.keys(monthlyTotals).sort();
+
+    const monthNames = months.map(month => {
+        const [year, number] = month.split("-");
+        return new Date(Number(year), Number(number) - 1)
+            .toLocaleString("en-US", { month: "long" });
+    });
+
+    revenueChart.data.labels = monthNames;
+    revenueChart.data.datasets[0].data =
+        months.map(month => monthlyTotals[month]);
+
+    revenueChart.update();
+
+    // Revenue by category
+    const categoryTotals = {};
+
+    data.forEach(item => {
+        categoryTotals[item.category] =
+            (categoryTotals[item.category] || 0) + item.revenue;
+    });
+
+    categoryChart.data.labels = Object.keys(categoryTotals);
+    categoryChart.data.datasets[0].data =
+        Object.values(categoryTotals);
+
+    categoryChart.update();
+
+    // Product performance
+    const productData = {};
+
+    data.forEach(item => {
+        if (!productData[item.product]) {
+            productData[item.product] = {
+                category: item.category,
+                orders: 0,
+                revenue: 0
+            };
+        }
+
+        productData[item.product].orders++;
+        productData[item.product].revenue += item.revenue;
+    });
+
+    document.getElementById("productsTable").innerHTML =
+        Object.entries(productData).map(([name, item]) => `
+            <tr>
+                <td>${name}</td>
+                <td>${item.category}</td>
+                <td>${item.orders}</td>
+                <td>${formatMoney(item.revenue)}</td>
+            </tr>
+        `).join("");
+
+    // Customer overview
+    const customerData = {};
+
+    data.forEach(item => {
+        if (!customerData[item.customer]) {
+            customerData[item.customer] = {
+                orders: 0,
+                spent: 0
+            };
+        }
+
+        customerData[item.customer].orders++;
+        customerData[item.customer].spent += item.revenue;
+    });
+
+    document.getElementById("customersTable").innerHTML =
+        Object.entries(customerData).map(([name, item]) => `
+            <tr>
+                <td>${name}</td>
+                <td>${item.orders}</td>
+                <td>${formatMoney(item.spent)}</td>
+            </tr>
+        `).join("");
+}
+
+// Apply all filters
 function filterSales() {
-    const searchValue = searchInput.value.toLowerCase();
+    const searchValue = searchInput.value.toLowerCase().trim();
     const selectedMonth = monthFilter.value;
     const selectedCategory = categoryFilter.value;
 
-    const filteredSales = sales.filter(sale => {
+    const filteredSales = sales.filter(item => {
         const matchesSearch =
-            sale.customer.toLowerCase().includes(searchValue) ||
-            sale.product.toLowerCase().includes(searchValue);
+            item.customer.toLowerCase().includes(searchValue) ||
+            item.product.toLowerCase().includes(searchValue);
 
         const matchesMonth =
             selectedMonth === "all" ||
-            sale.date.startsWith(selectedMonth);
+            item.date.startsWith(selectedMonth);
 
         const matchesCategory =
             selectedCategory === "all" ||
-            sale.category === selectedCategory;
+            item.category === selectedCategory;
 
         return matchesSearch && matchesMonth && matchesCategory;
     });
 
-    displaySales(filteredSales);
+    updateDashboard(filteredSales);
 }
 
+// Event listeners
 searchInput.addEventListener("input", filterSales);
 monthFilter.addEventListener("change", filterSales);
 categoryFilter.addEventListener("change", filterSales);
 
-displaySales(sales);
-
-
-
-// Revenue chart
-new Chart(document.getElementById("revenueChart"), {
-    type: "bar",
-    data: {
-        labels: ["January", "February", "March", "April", "May", "June"],
-        datasets: [{
-            label: "Revenue",
-            data: [3200, 4100, 3800, 5200, 4700, 6100],
-            backgroundColor: "#426b9a",
-            borderRadius: 5
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-            legend: {display: false}
-        }
-    }
-});
-
-// Category chart
-const categories = [...new Set(sales.map(item => item.category))];
-
-const categoryTotals = categories.map(category =>
-    sales
-        .filter(item => item.category === category)
-        .reduce((sum, item) => sum + item.revenue, 0)
-);
-
-// Product performance
-const productData = {};
-
-sales.forEach(item => {
-    if (!productData[item.product]) {
-        productData[item.product] = {
-            category: item.category,
-            orders: 0,
-            revenue: 0
-        };
-    }
-
-    productData[item.product].orders++;
-    productData[item.product].revenue += item.revenue;
-});
-
-document.getElementById("productsTable").innerHTML =
-    Object.entries(productData).map(([name, data]) => `
-        <tr>
-            <td>${name}</td>
-            <td>${data.category}</td>
-            <td>${data.orders}</td>
-            <td>$${data.revenue.toLocaleString()}</td>
-        </tr>
-    `).join("");
-
-// Customer overview
-const customerData = {};
-
-sales.forEach(item => {
-    if (!customerData[item.customer]) {
-        customerData[item.customer] = {
-            orders: 0,
-            spent: 0
-        };
-    }
-
-    customerData[item.customer].orders++;
-    customerData[item.customer].spent += item.revenue;
-});
-
-document.getElementById("customersTable").innerHTML =
-    Object.entries(customerData).map(([name, data]) => `
-        <tr>
-            <td>${name}</td>
-            <td>${data.orders}</td>
-            <td>$${data.spent.toLocaleString()}</td>
-        </tr>
-    `).join("");
-
-
-
-new Chart(document.getElementById("categoryChart"), {
-    type: "doughnut",
-    data: {
-        labels: categories,
-        datasets: [{
-            data: categoryTotals,
-            backgroundColor: ["#426b9a", "#70b7b0", "#e6b66a"],
-            borderWidth: 0
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false
-    }
-});
+// Initial dashboard
+updateDashboard(sales);
