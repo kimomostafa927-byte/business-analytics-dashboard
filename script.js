@@ -1,15 +1,14 @@
 
 const sales = [
-    {id: "ORD-1001", customer: "Ahmed Ali", product: "Laptop", category: "Electronics", revenue: 1200, cost: 900},
-    {id: "ORD-1002", customer: "Sara Mohamed", product: "Headphones", category: "Electronics", revenue: 250, cost: 150},
-    {id: "ORD-1003", customer: "Omar Hassan", product: "Office Chair", category: "Furniture", revenue: 400, cost: 260},
-    {id: "ORD-1004", customer: "Mona Adel", product: "Desk", category: "Furniture", revenue: 650, cost: 420},
-    {id: "ORD-1005", customer: "Youssef Samir", product: "Smart Watch", category: "Electronics", revenue: 500, cost: 350},
-    {id: "ORD-1006", customer: "Nour Ahmed", product: "Notebook", category: "Stationery", revenue: 80, cost: 30},
-    {id: "ORD-1007", customer: "Ali Mostafa", product: "Printer", category: "Electronics", revenue: 700, cost: 500},
-    {id: "ORD-1008", customer: "Laila Karim", product: "Bookshelf", category: "Furniture", revenue: 350, cost: 220}
+    {id:"ORD-1001", customer:"Ahmed Ali", product:"Laptop", category:"Electronics", revenue:1200, cost:900, date:"2026-01-05"},
+    {id:"ORD-1002", customer:"Sara Mohamed", product:"Headphones", category:"Electronics", revenue:250, cost:150, date:"2026-01-10"},
+    {id:"ORD-1003", customer:"Omar Hassan", product:"Office Chair", category:"Furniture", revenue:400, cost:260, date:"2026-02-03"},
+    {id:"ORD-1004", customer:"Mona Adel", product:"Desk", category:"Furniture", revenue:650, cost:420, date:"2026-02-15"},
+    {id:"ORD-1005", customer:"Youssef Samir", product:"Smart Watch", category:"Electronics", revenue:500, cost:350, date:"2026-03-08"},
+    {id:"ORD-1006", customer:"Nour Ahmed", product:"Notebook", category:"Stationery", revenue:80, cost:30, date:"2026-03-12"},
+    {id:"ORD-1007", customer:"Ali Mostafa", product:"Printer", category:"Electronics", revenue:700, cost:500, date:"2026-04-02"},
+    {id:"ORD-1008", customer:"Laila Karim", product:"Bookshelf", category:"Furniture", revenue:350, cost:220, date:"2026-04-15"}
 ];
-
 const totalRevenue = sales.reduce((sum, item) => sum + item.revenue, 0);
 const totalProfit = sales.reduce((sum, item) => sum + item.revenue - item.cost, 0);
 const customers = new Set(sales.map(item => item.customer)).size;
