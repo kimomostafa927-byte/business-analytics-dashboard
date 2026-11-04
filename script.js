@@ -40,6 +40,38 @@ function displaySales(data) {
     `).join("");
 }
 
+const searchInput = document.getElementById("search");
+const monthFilter = document.getElementById("monthFilter");
+const categoryFilter = document.getElementById("categoryFilter");
+
+function filterSales() {
+    const searchValue = searchInput.value.toLowerCase();
+    const selectedMonth = monthFilter.value;
+    const selectedCategory = categoryFilter.value;
+
+    const filteredSales = sales.filter(sale => {
+        const matchesSearch =
+            sale.customer.toLowerCase().includes(searchValue) ||
+            sale.product.toLowerCase().includes(searchValue);
+
+        const matchesMonth =
+            selectedMonth === "all" ||
+            sale.date.startsWith(selectedMonth);
+
+        const matchesCategory =
+            selectedCategory === "all" ||
+            sale.category === selectedCategory;
+
+        return matchesSearch && matchesMonth && matchesCategory;
+    });
+
+    displaySales(filteredSales);
+}
+
+searchInput.addEventListener("input", filterSales);
+monthFilter.addEventListener("change", filterSales);
+categoryFilter.addEventListener("change", filterSales);
+
 displaySales(sales);
 
 // Search transactions
