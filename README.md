@@ -20,7 +20,13 @@ INSIGHT is a business analytics dashboard designed to visualize sales performanc
 - Chart.js
 
 ## Data
-This project currently uses sample data generated for demonstration and learning purposes. It is not connected to a live database or backend.
+
+The dashboard uses sample data stored in JavaScript.
+
+A separate SQLite database file is included in this repository.
+It contains sample tables and SQL queries for revenue and sales analysis.
+
+The SQLite database is not directly connected to the dashboard.
 
 ## Purpose
 This project was built to practice front-end development, data visualization, and business analytics concepts.
